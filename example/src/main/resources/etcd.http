@@ -1,0 +1,37 @@
+@baseUrl=http://localhost:8030
+
+### Get all users (not cached)
+GET {{baseUrl}}/etcd/users
+
+> {%
+    client.global.set("id", response.body[0].id);
+    client.global.set("username", response.body[0].username);
+%}
+
+### Get user by username (cached in usersByUsername)
+GET {{baseUrl}}/etcd/users/username/user1
+
+### Create a new user (CachePut on users cache)
+POST {{baseUrl}}/etcd/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "newuser_{{$timestamp}}",
+  "email": "newuser_{{$timestamp}}@example.com",
+  "firstName": "New",
+  "lastName": "User"
+}
+
+> {%
+client.global.set("id", response.body.id);
+%}
+
+### Delete the created user (CacheEvict on users cache)
+DELETE {{baseUrl}}/etcd/users/{{id}}
+
+### Clear all caches (users and usersByUsername)
+DELETE {{baseUrl}}/etcd/users/cache
+
+### Get cache stats
+GET {{baseUrl}}/etcd/users/cache/stats

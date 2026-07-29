@@ -1,0 +1,10 @@
+server:
+  port: 8030
+spring:
+  application:
+    name: Etcd Cache Demo
+  etcd:
+    endpoints: http://localhost:2379
+    cache:
+      key-prefix: /spring_cache_entries
+      entry-ttl: 30s
